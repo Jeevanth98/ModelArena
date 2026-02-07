@@ -386,6 +386,12 @@ class VideoPreprocessor:
                 print(f"Error processing {Path(video_path).name}: {e}")
                 failed_videos.append(Path(video_path).name)
         
+        # Calculate success rate (handle empty case)
+        if len(all_metadata) > 0:
+            success_rate = (len(all_metadata) - len(failed_videos)) / len(all_metadata) * 100
+        else:
+            success_rate = 0.0
+        
         # Save metadata
         metadata_file = output_dir / "preprocessing_metadata.json"
         with open(metadata_file, 'w') as f:
@@ -394,14 +400,18 @@ class VideoPreprocessor:
                 'failed_videos': failed_videos,
                 'total_processed': len(all_metadata),
                 'total_failed': len(failed_videos),
-                'success_rate': (len(all_metadata) - len(failed_videos)) / len(all_metadata) * 100
+                'success_rate': success_rate
             }, f, indent=2)
         
         print(f"\n{'='*70}")
-        print(f"Preprocessing Complete!")
-        print(f"  Successfully processed: {len(all_metadata) - len(failed_videos)}/{len(all_metadata)}")
-        print(f"  Failed: {len(failed_videos)}")
-        print(f"  Metadata saved: {metadata_file}")
+        if len(all_metadata) == 0:
+            print(f"⚠️  WARNING: No videos were processed!")
+            print(f"  Please check that video files exist in the specified directories.")
+        else:
+            print(f"Preprocessing Complete!")
+            print(f"  Successfully processed: {len(all_metadata) - len(failed_videos)}/{len(all_metadata)}")
+            print(f"  Failed: {len(failed_videos)}")
+            print(f"  Metadata saved: {metadata_file}")
         print(f"{'='*70}\n")
         
         return {
