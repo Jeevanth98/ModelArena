@@ -140,32 +140,36 @@ class MetricsCalculator:
         
         Args:
             predictions: Predicted probabilities (N,)
-            targets: Ground truth labels (N,)
+            targets: Ground truth labels (N,) - can be soft labels from MixUp
             threshold: Classification threshold
             
         Returns:
             Dictionary of metrics
         """
-        # Convert to binary predictions
+        # Convert soft labels to binary (for MixUp compatibility)
+        # If targets are already binary (0 or 1), this won't change them
+        binary_targets = (targets >= threshold).astype(int)
+        
+        # Convert predictions to binary
         binary_preds = (predictions >= threshold).astype(int)
         
         # Calculate metrics
         metrics = {}
         
-        # Basic metrics
-        metrics['accuracy'] = accuracy_score(targets, binary_preds)
-        metrics['precision'] = precision_score(targets, binary_preds, zero_division=0)
-        metrics['recall'] = recall_score(targets, binary_preds, zero_division=0)
-        metrics['f1_score'] = f1_score(targets, binary_preds, zero_division=0)
+        # Basic metrics (use binary targets and predictions)
+        metrics['accuracy'] = accuracy_score(binary_targets, binary_preds)
+        metrics['precision'] = precision_score(binary_targets, binary_preds, zero_division=0)
+        metrics['recall'] = recall_score(binary_targets, binary_preds, zero_division=0)
+        metrics['f1_score'] = f1_score(binary_targets, binary_preds, zero_division=0)
         
-        # AUC-ROC (requires probabilities)
+        # AUC-ROC (requires probabilities and binary targets)
         try:
-            metrics['auc_roc'] = roc_auc_score(targets, predictions)
+            metrics['auc_roc'] = roc_auc_score(binary_targets, predictions)
         except ValueError:
             metrics['auc_roc'] = 0.0
         
-        # Confusion matrix
-        cm = confusion_matrix(targets, binary_preds)
+        # Confusion matrix (use binary values)
+        cm = confusion_matrix(binary_targets, binary_preds)
         if cm.shape == (2, 2):
             tn, fp, fn, tp = cm.ravel()
             metrics['true_negatives'] = int(tn)
