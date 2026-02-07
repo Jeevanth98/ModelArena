@@ -1,0 +1,80 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Data and Models (LARGE FILES - DO NOT COMMIT)
+data/train/**/*.mp4
+data/test/**/*.mp4
+data/processed/
+data/**/*.jpg
+data/**/*.png
+models/
+*.pth
+*.pt
+*.h5
+*.ckpt
+*.pkl
+*.model
+
+# Results
+results/
+outputs/
+predictions.csv
+submission_predictions.csv
+validation_results.csv
+*.zip
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Keep directory structure but not content
+!data/train/real/.gitkeep
+!data/train/fake/.gitkeep
+!data/test/.gitkeep
+
+# Keep small metadata files
+!data/train_labels.csv
+!data/dataset-metadata.json
